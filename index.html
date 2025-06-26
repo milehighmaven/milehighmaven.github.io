@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Payment Method Form</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 500px; margin: auto; }
+    label { display: block; margin-top: 10px; }
+    input, select { width: 100%; padding: 8px; margin-top: 5px; }
+    button { margin-top: 15px; padding: 10px; width: 100%; }
+    .bank-fields { display: none; }
+  </style>
+</head>
+<body>
+  <h2>Organization Payment Method Setup</h2>
+  <form id="paymentForm">
+    <label>Organization Name
+      <input type="text" name="organizationName" required>
+    </label>
+    <label>Tax ID Number
+      <input type="text" name="taxIdNumber" required>
+    </label>
+    <label>Mailing Address
+      <input type="text" name="mailingAddress" required>
+    </label>
+    <label>Contact Email
+      <input type="email" name="contactEmail" required>
+    </label>
+    <label>Contact Phone
+      <input type="tel" name="contactPhone" required>
+    </label>
+    <label>Payment Method
+      <select name="paymentMethod" id="paymentMethod">
+        <option value="ACH">ACH</option>
+        <option value="VirtualCard">Virtual Card</option>
+      </select>
+    </label>
+
+    <div class="bank-fields" id="bankFields">
+      <label>Bank Name
+        <input type="text" name="bankName">
+      </label>
+      <label>Account Number
+        <input type="text" name="accountNumber">
+      </label>
+      <label>Routing Number
+        <input type="text" name="routingNumber">
+      </label>
+    </div>
+
+    <button type="submit">Submit</button>
+    <div id="result" style="margin-top: 10px;"></div>
+  </form>
+
+  <script>
+    const form = document.getElementById('paymentForm');
+    const paymentMethod = document.getElementById('paymentMethod');
+    const bankFields = document.getElementById('bankFields');
+    const resultDiv = document.getElementById('result');
+
+    paymentMethod.addEventListener('change', () => {
+      bankFields.style.display = paymentMethod.value === 'ACH' ? 'block' : 'none';
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(form);
+      const jsonData = {};
+      formData.forEach((value, key) => { jsonData[key] = value });
+
+      const response = await fetch('https://localhost:5001/api/paymentmethod', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(jsonData)
+      });
+
+      const result = await response.json();
+      resultDiv.innerHTML = `<pre>${JSON.stringify(result, null, 2)}</pre>`;
+    });
+  </script>
+</body>
+</html>
