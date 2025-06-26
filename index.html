@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Payment Form</title>
+  <title>Bryan Pay</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -53,11 +53,13 @@
 </head>
 <body>
 
-  <h2>Make a Payment</h2>
+  <h2>Add a Payment Type</h2>
 
   <div class="toggle-buttons">
     <button onclick="showForm('credit')">Credit Card</button>
+    &nbsp;
     <button onclick="showForm('ach')">ACH Bank Transfer</button>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   </div>
 
   <form class="form-section hidden" id="creditForm">
@@ -93,7 +95,7 @@
     </select>
   </form>
 
-  <button onclick="submitPayment()">Submit Payment</button>
+  <button onclick="submitPayment()">Add Payment</button>
 
   <script>
     function showForm(type) {
