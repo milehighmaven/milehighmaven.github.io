@@ -183,31 +183,73 @@
       </div>
     </form>
 
-    <form id="achForm" class="form-section">
-      <h3>ACH Bank Info</h3>
-      <label>Account Holder Name</label>
-      <input type="text" name="ach_name">
+   <form id="achForm" class="form-section">
+  <h3>ACH Bank Info</h3>
 
-      <label>Routing Number</label>
-      <input type="text" name="ach_routing" maxlength="9" id="ach_routing" oninput="detectBankType(this.value)">
-      <div class="hint" id="bankHint"></div>
+  <label>Account Holder Name</label>
+  <input type="text" name="ach_name">
 
-      <label>Account Number</label>
-      <input type="text" name="ach_account" id="ach_account">
+  <label>Routing Number</label>
+  <input type="text" name="ach_routing" maxlength="9" id="ach_routing" oninput="detectBankType(this.value)">
+  <div class="hint" id="bankHint"></div>
 
-      <label>Confirm Account Number</label>
-      <input type="text" name="ach_account_confirm" id="ach_account_confirm">
+  <label>Account Number</label>
+  <input type="text" name="ach_account" id="ach_account">
 
-      <label>Account Type</label>
-      <select name="ach_type">
-        <option value="checking">Checking</option>
-        <option value="savings">Savings</option>
-      </select>
+  <label>Confirm Account Number</label>
+  <input type="text" name="ach_account_confirm" id="ach_account_confirm">
 
-      <div class="autopay-container">
-        <label><input type="checkbox" id="ach_autopay"> Enable Auto Pay</label>
-      </div>
-    </form>
+  <label>Account Type</label>
+  <select name="ach_type">
+    <option value="checking">Checking</option>
+    <option value="savings">Savings</option>
+  </select>
+
+  <hr style="margin: 20px 0; border-color: var(--border);">
+
+  <h3>Business Enrollment Info</h3>
+
+  <label>Business Name</label>
+  <input type="text" name="business_name">
+
+  <label>Business Address</label>
+  <input type="text" name="business_address">
+
+  <label>TIN or EIN (9 digits)</label>
+  <input type="text" name="ein" maxlength="9" pattern="\d{9}" title="9-digit Tax ID number">
+
+  <label>NPI</label>
+  <input type="text" name="npi">
+
+  <label>Telephone Number</label>
+  <input type="tel" name="phone" placeholder="e.g. (123) 456-7890">
+
+  <label>Email Address</label>
+  <input type="email" name="email">
+
+  <label>Provider Type</label>
+  <select name="provider_type">
+    <option value="">-- Select Provider Type --</option>
+    <option value="clinic">Clinic</option>
+    <option value="hospital">Hospital</option>
+    <option value="individual">Individual</option>
+  </select>
+
+  <label>Market Type</label>
+  <select name="market_type">
+    <option value="">-- Select Market Type --</option>
+    <option value="commercial">Commercial</option>
+    <option value="medicare">Medicare Advantage</option>
+  </select>
+
+  <div class="autopay-container">
+    <label><input type="checkbox" id="ach_autopay"> Enable Auto Pay</label>
+  </div>
+
+  <div class="form-footer">
+    <button type="button" onclick="submitEnrollment()">Submit Enrollment</button>
+  </div>
+</form>
 
     <div class="form-footer">
       <button onclick="submitPayment()">Add Payment</button>
@@ -222,6 +264,36 @@
   </div>
 
   <script>
+function submitEnrollment() {
+  const form = document.getElementById('achForm');
+  const output = document.getElementById('output');
+
+  const businessName = form.business_name.value;
+  const address = form.business_address.value;
+  const ein = form.ein.value;
+  const npi = form.npi.value;
+  const phone = form.phone.value;
+  const email = form.email.value;
+  const providerType = form.provider_type.value;
+  const marketType = form.market_type.value;
+
+  let summary = `<h4>ACH Enrollment Summary</h4><ul>`;
+  summary += `<li><strong>Business Name:</strong> ${businessName}</li>`;
+  summary += `<li><strong>Address:</strong> ${address}</li>`;
+  summary += `<li><strong>TIN/EIN:</strong> ${ein}</li>`;
+  summary += `<li><strong>NPI:</strong> ${npi}</li>`;
+  summary += `<li><strong>Phone:</strong> ${phone}</li>`;
+  summary += `<li><strong>Email:</strong> ${email}</li>`;
+  summary += `<li><strong>Provider Type:</strong> ${providerType}</li>`;
+  summary += `<li><strong>Market Type:</strong> ${marketType}</li>`;
+  summary += `</ul>`;
+
+  output.innerHTML = summary;
+  output.style.display = 'block';
+}
+
+
+    
     function showForm(type) {
       document.getElementById('creditForm').classList.remove('active');
       document.getElementById('achForm').classList.remove('active');
