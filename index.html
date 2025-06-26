@@ -4,18 +4,39 @@
   <meta charset="UTF-8">
   <title>Bryan's Payment Portal</title>
   <style>
+    :root {
+      --bg: #121212;
+      --text: #f1f1f1;
+      --form-bg: #1e1e1e;
+      --input-bg: #2c2c2c;
+      --hint-color: #bbb;
+      --border: #555;
+      --btn-primary: #007bff;
+      --btn-green: #28a745;
+    }
+
+    body.light {
+      --bg: #f4f4f4;
+      --text: #222;
+      --form-bg: #ffffff;
+      --input-bg: #ffffff;
+      --hint-color: #555;
+      --border: #ccc;
+    }
+
     body {
       font-family: 'Segoe UI', sans-serif;
       margin: 0;
       padding: 40px;
-      background-color: #121212;
-      color: #f1f1f1;
+      background-color: var(--bg);
+      color: var(--text);
+      transition: background-color 0.3s, color 0.3s;
     }
 
     .container {
       max-width: 650px;
       margin: auto;
-      background-color: #1e1e1e;
+      background-color: var(--form-bg);
       padding: 30px;
       border-radius: 12px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.5);
@@ -24,7 +45,7 @@
     h2 {
       text-align: center;
       margin-bottom: 30px;
-      color: #00bfff;
+      color: var(--btn-primary);
     }
 
     .toggle-buttons {
@@ -37,7 +58,7 @@
     .toggle-buttons button {
       padding: 12px 20px;
       font-size: 16px;
-      background-color: #007BFF;
+      background-color: var(--btn-primary);
       border: none;
       border-radius: 6px;
       color: white;
@@ -68,195 +89,15 @@
       width: 100%;
       padding: 10px;
       margin-top: 5px;
-      border: 1px solid #555;
+      border: 1px solid var(--border);
       border-radius: 5px;
-      background-color: #2c2c2c;
-      color: #f1f1f1;
+      background-color: var(--input-bg);
+      color: var(--text);
     }
 
     .autopay-container {
       margin-top: 15px;
-    }
-
-    .autopay-container label {
-      font-weight: normal;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      cursor: pointer;
-    }
-
-    .form-footer {
-      margin-top: 25px;
       text-align: center;
     }
 
-    .form-footer button {
-      background-color: #28a745;
-      padding: 12px 25px;
-      color: white;
-      font-size: 16px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-
-    .form-footer button:hover {
-      background-color: #218838;
-    }
-
-    .output {
-      margin-top: 30px;
-      padding: 20px;
-      background-color: #2c2c2c;
-      border-left: 4px solid #00bfff;
-      border-radius: 8px;
-      display: none;
-    }
-
-    .hint {
-      font-size: 0.9em;
-      color: #bbb;
-      margin-top: 5px;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h2>Bryan's Payment Portal</h2>
-
-    <div class="toggle-buttons">
-      <button onclick="showForm('credit')">Credit Card</button>
-      <button onclick="showForm('ach')">ACH Bank</button>
-    </div>
-
-    <form id="creditForm" class="form-section">
-      <h3>Credit Card Info</h3>
-      <label>Full Name</label>
-      <input type="text" name="cc_name">
-
-      <label>Card Number</label>
-      <input type="text" name="cc_number" id="cc_number" maxlength="16" oninput="detectCardType(this.value)">
-      <div class="hint" id="cardTypeHint"></div>
-
-      <label>Expiration Date</label>
-      <input type="text" name="cc_exp" placeholder="MM/YY">
-
-      <label>CVV</label>
-      <input type="text" name="cc_cvv" maxlength="4">
-
-      <div class="autopay-container">
-        <label><input type="checkbox" id="cc_autopay"> Enable Auto Pay</label>
-      </div>
-    </form>
-
-    <form id="achForm" class="form-section">
-      <h3>ACH Bank Info</h3>
-      <label>Account Holder Name</label>
-      <input type="text" name="ach_name">
-
-      <label>Routing Number</label>
-      <input type="text" name="ach_routing" maxlength="9" id="ach_routing" oninput="detectBankType(this.value)">
-      <div class="hint" id="bankHint"></div>
-
-      <label>Account Number</label>
-      <input type="text" name="ach_account" id="ach_account">
-
-      <label>Confirm Account Number</label>
-      <input type="text" name="ach_account_confirm" id="ach_account_confirm">
-
-      <label>Account Type</label>
-      <select name="ach_type">
-        <option value="checking">Checking</option>
-        <option value="savings">Savings</option>
-      </select>
-
-      <div class="autopay-container">
-        <label><input type="checkbox" id="ach_autopay"> Enable Auto Pay</label>
-      </div>
-    </form>
-
-    <div class="form-footer">
-      <button onclick="submitPayment()">Add Payment</button>
-    </div>
-
-    <div id="output" class="output"></div>
-  </div>
-
-  <script>
-    function showForm(type) {
-      document.getElementById('creditForm').classList.remove('active');
-      document.getElementById('achForm').classList.remove('active');
-      document.getElementById('output').style.display = 'none';
-
-      if (type === 'credit') {
-        document.getElementById('creditForm').classList.add('active');
-      } else {
-        document.getElementById('achForm').classList.add('active');
-      }
-    }
-
-    function detectCardType(number) {
-      const hint = document.getElementById('cardTypeHint');
-      if (number.startsWith('4')) hint.textContent = 'Card Type: Visa';
-      else if (number.startsWith('5') || number.startsWith('2')) hint.textContent = 'Card Type: MasterCard';
-      else if (number.startsWith('34') || number.startsWith('37')) hint.textContent = 'Card Type: American Express';
-      else if (number.startsWith('6')) hint.textContent = 'Card Type: Discover';
-      else hint.textContent = '';
-    }
-
-    function detectBankType(routing) {
-      const hint = document.getElementById('bankHint');
-      if (routing === '121000248') {
-        hint.textContent = 'Bank: Wells Fargo';
-      } else {
-        hint.textContent = '';
-      }
-    }
-
-    function submitPayment() {
-      const creditForm = document.getElementById('creditForm');
-      const achForm = document.getElementById('achForm');
-      const output = document.getElementById('output');
-      let summary = '<h4>Payment Summary</h4><ul>';
-
-      if (creditForm.classList.contains('active')) {
-        const name = creditForm.cc_name.value;
-        const card = creditForm.cc_number.value;
-        const exp = creditForm.cc_exp.value;
-        const autopay = document.getElementById('cc_autopay').checked;
-        summary += `<li><strong>Method:</strong> Credit Card</li>`;
-        summary += `<li><strong>Name:</strong> ${name}</li>`;
-        summary += `<li><strong>Card:</strong> **** **** **** ${card.slice(-4)}</li>`;
-        summary += `<li><strong>Expires:</strong> ${exp}</li>`;
-        summary += `<li><strong>Auto Pay:</strong> ${autopay ? 'Enabled' : 'Disabled'}</li>`;
-      } else if (achForm.classList.contains('active')) {
-        const name = achForm.ach_name.value;
-        const routing = achForm.ach_routing.value;
-        const account = achForm.ach_account.value;
-        const confirm = achForm.ach_account_confirm.value;
-        const type = achForm.ach_type.value;
-        const autopay = document.getElementById('ach_autopay').checked;
-
-        if (account !== confirm) {
-          alert("Account numbers do not match!");
-          return;
-        }
-
-        summary += `<li><strong>Method:</strong> ACH Bank</li>`;
-        summary += `<li><strong>Account Holder:</strong> ${name}</li>`;
-        summary += `<li><strong>Routing #:</strong> ${routing}</li>`;
-        summary += `<li><strong>Account #:</strong> ****${account.slice(-4)}</li>`;
-        summary += `<li><strong>Type:</strong> ${type}</li>`;
-        summary += `<li><strong>Auto Pay:</strong> ${autopay ? 'Enabled' : 'Disabled'}</li>`;
-      } else {
-        summary = '<p style="color:red;">Please select a payment method.</p>';
-      }
-
-      summary += '</ul>';
-      output.innerHTML = summary;
-      output.style.display = 'block';
-    }
-  </script>
-</body>
-</html>
+    .fo
